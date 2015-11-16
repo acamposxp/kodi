@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addons>
+<addon id="Cleitonleonelcreton.repository" name="Cleiton leonel creton Repository" version="0.0.1" provider-name="Cleiton leonel creton">
+	<extension point="xbmc.addon.repository" name="Cleiton leonel creton Repository">
+		<info compressed="false">http://raw.github.com/IptvBrasilGroup/Cleitonleonelcreton.repository/master/addons.xml</info>
+		<checksum>http://raw.github.com/IptvBrasilGroup/Cleitonleonelcreton.repository/master/addons.xml.md5</checksum>
+		<datadir zip="true">http://raw.github.com/IptvBrasilGroup/Cleitonleonelcreton.repository/master/repo/</datadir>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary>Repository Addon</summary>
+		<description>Addons criados ou modificados por Cleiton Leonel Creton</description>
+		<disclaimer></disclaimer>
+		<platform>all</platform>
+	</extension>
+</addon>
+
 <addon id="plugin.video.cineflix"
        name="Cine[B][COLOR gold]FLIX[/COLOR]  ; )[/B]"
        version="0.0.1"
@@ -44,5 +58,210 @@
   <description lang="en">Assistir aos filmes do site http://efilmesnarede.com/</description>
   <platform>all</platform>
  </extension>
+</addon>
+
+<addon id="repository.bromix" name="Bromix Add-ons" version="1.2.2" provider-name="bromix">
+    <extension point="xbmc.addon.repository" name="Bromix Add-ons">
+		<info compressed="true">https://github.com/bromix/repository.bromix.storage/raw/master/addons.xml</info>
+		<checksum>https://github.com/bromix/repository.bromix.storage/raw/master/addons.xml.md5</checksum>
+		<datadir zip="true">https://raw.githubusercontent.com/bromix/repository.bromix.storage/master/</datadir>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary>Bromix Add-ons</summary>
+		<summary lang="de">Bromix Add-ons</summary>
+		<description>Repository of add-ons by Bromix. Some add-ons are final and perhaps obtainable by the official repository of KODI. Add-ons in alpha and beta status are here to test exclusively and for testers to provide them with updates.</description>
+		<description lang="de">Repository an Add-ons von Bromix. Einige Add-Ons sind final und vielleicht durch das offizielle Repository von KODI erhältlich. Add-Ons in alpha- und beta-status sind hier ausschließlich zum Testen und um Tester mit Updates zu versorgen.</description>
+		<platform>all</platform>
+	</extension>
+</addon>
+
+<addon id="repository.ddurdle" name="ddurdle's XBMC Addons" version="1.0.2" provider-name="ddurdle">
+	<extension point="xbmc.addon.repository" name="ddurdle's XBMC Addon Repository">
+		<info compressed="false">https://raw.github.com/ddurdle/repository.ddurdle/master/addons.xml</info>
+		<checksum>https://raw.github.com/ddurdle/repository.ddurdle/master/addons.xml.md5</checksum>
+		<datadir zip="true">http://dmdsoftware.net/repository.ddurdle/</datadir>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary>Install ddurdle's Addons</summary>
+		<description>Download and install addons by ddurdle</description>
+		<platform>all</platform>
+	</extension>
+</addon>
+
+<addon id="repository.iptvbrasil" name="IPTV Brasil" version="1.0" provider-name="IPTV Brasil">
+ <extension point="xbmc.addon.repository" name="IPTV Brasil Add-on Repository">
+  <info compressed="false">http://iptvbrgroup.890m.com/repository/addons.xml</info>
+  <checksum>http://iptvbrgroup.890m.com/repository/addons.xml.md5</checksum>
+  <datadir zip="True">http://iptvbrgroup.890m.com/repository/</datadir>
+ </extension>
+ <extension point="xbmc.addon.metadata">
+  <summary>IPTV Brasil</summary>
+  <description>Aqui você encontra todos os addons do Team IPTV Brasil.</description>
+  <disclaimer></disclaimer>
+  <platform>all</platform>
+ </extension>
+</addon>
+
+<addon id="repository.Kinkin" name="Kinkins REPO" version="1.4" provider-name="Kinkin">
+	<extension point="xbmc.addon.repository" name="Kinkin Addon Repository">
+		<info compressed="false">https://offshoregit.com/kinkin-xbmc-repository/addons.xml</info>
+		<checksum>https://offshoregit.com/kinkin-xbmc-repository/addons.xml.md5</checksum>
+		<datadir zip="true">https://offshoregit.com/kinkin-xbmc-repository/zips</datadir>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary>Install Kinkins Addons</summary>
+		<description>Install addons by Kinkin</description>
+		<platform>all</platform>
+	</extension>
+</addon>
+
+<addon id="repository.lambda" name="lambda Add-on repository" version="1.1.0" provider-name="lambda">
+	<extension point="xbmc.addon.repository" name="lambda Add-on repository">
+		<dir>
+			<info compressed="false">http://raw.github.com/lambda81/lambda-repo/master/addons.xml</info>
+			<checksum>http://raw.github.com/lambda81/lambda-repo/master/addons.xml.md5</checksum>
+			<datadir zip="true">http://raw.github.com/lambda81/lambda-repo/master/</datadir>
+		</dir>
+		<info compressed="false">https://offshoregit.com/lambda81/lambda-repo/addons.xml</info>
+		<checksum>https://offshoregit.com/lambda81/lambda-repo/addons.xml.md5</checksum>
+		<datadir zip="true">https://offshoregit.com/lambda81/lambda-repo/</datadir>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary lang="en">Install Add-ons from lambda</summary>
+		<description lang="en">Download and install add-ons from lambda repository.</description>
+		<platform>all</platform>
+	</extension>
+</addon>
+
+<addon id="repository.lunatixz" name="Lunatixz Repo" version="1.0" provider-name="Lunatixz">
+    <extension point="xbmc.addon.repository" name="Official PseudoTV Live Repository">
+        <info compressed="false">http://raw.github.com/Lunatixz/XBMC_Addons/master/addons.xml</info>
+        <checksum>http://raw.github.com/Lunatixz/XBMC_Addons/master/addons.xml.md5</checksum>
+        <datadir zip="true">http://raw.github.com/Lunatixz/XBMC_Addons/master/zips</datadir>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <summary></summary>
+        <description></description>
+        <platform>all</platform>
+    </extension>
+</addon>
+
+<addon id="repository.MaxMustermann.xbmc" name="MaxMustermann's add-ons" version="1.0.1" provider-name="MaxMustermann">
+	<extension point="xbmc.addon.repository" name="MaxMustermann's add-on repository">
+		<info compressed="false">http://xbmc-development-with-passion.googlecode.com/svn/branches/repo/addons.xml</info>
+		<checksum>http://xbmc-development-with-passion.googlecode.com/svn/branches/repo/addons.xml.md5</checksum>
+		<datadir zip="true">http://xbmc-development-with-passion.googlecode.com/svn/branches/repo</datadir>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary>Install add-ons from MaxMustermann's repository</summary>
+		<summary lang="de">Installiere Add-ons von MaxMustermann's Repository</summary>
+		<description>download and install add-ons from MaxMustermann's repository.</description>
+		<description lang="de">Downloade und installiere Add-ons von MaxMustermann's Repository.</description>
+		<disclaimer></disclaimer>
+		<platform>all</platform>
+	</extension>
+</addon>
+
+<addon id="repository.shani" name="Shanis Addon Repository" version="2.6" provider-name="Shani">
+	<extension point="xbmc.addon.repository" name="Shanis Addon Repository">
+		<info compressed="false">https://raw.github.com/Shani-08/ShaniXBMCWork/master/addons.xml</info>
+		<checksum>https://raw.github.com/Shani-08/ShaniXBMCWork/master/addons.xml.md5</checksum>
+		<datadir zip="true">https://raw.github.com/Shani-08/ShaniXBMCWork/master/zips</datadir>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary>Addons related to XBMC for Zemtv etc</summary>
+		<description>Go though the plugins and see what you like</description>
+		<platform>all</platform>
+	</extension>
+</addon>
+
+<addon id="repository.spoyser"
+        name="spoysers XBMC Add-ons"
+        version="1.0.6"
+        provider-name="spoyser">
+    <extension point="xbmc.addon.repository"
+        name="spoysers XBMC Add-ons">
+        <info compressed="false">https://raw.github.com/spoyser/spoyser-repo/master/addons.xml</info>
+        <checksum>https://raw.github.com/spoyser/spoyser-repo/master/addons.xml.md5</checksum>
+        <datadir zip="true">https://raw.github.com/spoyser/spoyser-repo/master/zips/</datadir>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <summary>Install XBMC add-ons from the official spoyser repository</summary>
+        <description>Install XBMC add-ons from spoysers official repository</description>
+        <disclaimer></disclaimer>
+        <platform>all</platform>
+    </extension>
+</addon>
+
+<addon id="repository.whitecream" name="WhiteCream repo" version="0.0.1" provider-name="mortael">
+	<extension point="xbmc.addon.repository" name="WhiteCream repo">
+		<info compressed="false">http://raw.github.com/whitecream01/WhiteCream-V0.0.1/master/addons.xml</info>
+		<checksum>http://raw.github.com/whitecream01/WhiteCream-V0.0.1/master/addons.xml.md5</checksum>
+		<datadir zip="true">http://raw.github.com/whitecream01/WhiteCream-V0.0.1/master</datadir>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary>The Official WhiteCream repository</summary>
+		<description>This repository contains addons that are for adults only. You may only view the contents of this repository if you are at least 18 years of age, or at least the age of majority in the jurisdiction where you reside or from which you access this content.</description>
+		<disclaimer>The owners and submitters to this repository do not host or distribute any of the content displayed by these addons nor do they have any affiliation with the content providers.</disclaimer>
+		<platform>all</platform>
+	</extension>
+</addon>
+
+<addon id="repository.xbmcadult" name="XBMC-Adult Addons" version="1.0.6" provider-name="xbmc-adult">
+	<extension point="xbmc.addon.repository" name="XBMC Adult Addons">
+		<info compressed="false">http://raw.github.com/xbmc-adult/xbmc-adult/ghmaster/addons.xml</info>
+		<checksum>http://raw.github.com/xbmc-adult/xbmc-adult/ghmaster/addons.xml.md5</checksum>
+		<datadir zip="true">http://raw.github.com/xbmc-adult/xbmc-adult/ghmaster</datadir>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary>XBMC Addons for Adults Only</summary>
+		<description>This repository contains addons that are for adults only. You may only view the contents of this repository if you are at least 18 years of age, or at least the age of majority in the jurisdiction where you reside or from which you access this content.</description>
+		<disclaimer>The owners and submitters to this repository do not host or distribute any of the content displayed by these addons nor do they have any affiliation with the content providers.</disclaimer>
+		<platform>all</platform>
+	</extension>
+</addon>
+
+<addon id="repository.zeus" name="[COLOR black].[/COLOR][COLOR yellow]ZEUS [/COLOR][COLOR white]Repository[/COLOR]" version="1.1.0" provider-name="ZEUS">
+	<extension point="xbmc.addon.repository" name="[COLOR black].[/COLOR][COLOR yellow]ZEUS [/COLOR][COLOR white]Repository[/COLOR]">
+        <info compressed="false">http://repo.zeusrepo.com/addons.xml</info>
+		<checksum>http://repo.zeusrepo.com/addons.xml.md5</checksum>
+		<datadir zip="true">http://repo.zeusrepo.com/zips</datadir>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary>ZEUS KODI XBMC ADDON From Hakamac</summary>
+		<description>For Support and news go to http://zeus.video</description>
+		<platform>all</platform>
+	</extension>
+</addon>
+
+<addon id="rogger.repository" name="rogger repository" version="0.0.2" provider-name="rogger2">
+	<extension point="xbmc.addon.repository" name="rogger Add-on Repository">
+		<info compressed="false">http://raw.github.com/rogger2/rogger.repository/master/addons.xml</info>
+		<checksum>http://raw.github.com/rogger2/rogger.repository/master/addons.xml.md5</checksum>
+		<datadir zip="true">http://raw.github.com/rogger2/rogger.repository/master/repo/</datadir>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary>rogger Addon</summary>
+		<description>Addon Description</description>
+		<disclaimer></disclaimer>
+		<platform>all</platform>
+	</extension>
+</addon>
+
+<addon id="ruuk.addon.repository"
+	name="ruuk's Addon Repo"
+	version="1.0.0"
+	provider-name="Rick Phillips (ruuk)">
+	<extension point="xbmc.addon.metadata">
+		<platform>all</platform>
+		<summary lang="en">ruuk's Addon Repo</summary>
+		<description lang="en">ruuk's XBMC addon repository for bleeding edge and likely buggy :) versions.</description>
+	</extension>
+	<extension point="xbmc.addon.repository"
+		name="ruuk's addon repository">
+		<info>https://ruuks-repo.googlecode.com/svn/trunk/repo/addons.xml</info>
+		<checksum>https://ruuks-repo.googlecode.com/svn/trunk/repo/addons.xml.md5</checksum>
+		<datadir zip="true">https://ruuks-repo.googlecode.com/svn/trunk/repo/</datadir>
+	</extension>
 </addon>
 </addons>
