@@ -18,19 +18,45 @@
 
 ##############BIBLIOTECAS A IMPORTAR E DEFINICOES####################
 
-import urllib, urllib2, re, xbmcplugin, xbmcgui, xbmc, xbmcaddon, HTMLParser, urlresolver
+import urllib, urllib2, re, cookielib, xbmcplugin, xbmcgui, xbmc, xbmcaddon, HTMLParser, urlresolver
 import xml.etree.ElementTree as ET
-import jsunpack
-from bs4 import BeautifulSoup
+import json
+from resources.lib import control
+from resources.lib import client
+from resources.lib import jsunpack
+from resources.lib import captcha
+from resources.lib.BeautifulSoup import BeautifulSoup
+
+addon_id    = 'plugin.video.efilmes'
+selfAddon   = xbmcaddon.Addon(id=addon_id)
+datapath    = xbmc.translatePath(selfAddon.getAddonInfo('profile'))
+addonfolder = selfAddon.getAddonInfo('path')
+
+icon   = addonfolder + '/icon.png'
+fanart = addonfolder + '/fanart.jpg'
+
+try    : os.mkdir(datapath)
+except : pass
+
+progress = xbmcgui.DialogProgress()
+dialog = xbmcgui.Dialog()
 
 h = HTMLParser.HTMLParser()
+urlopen = urllib2.urlopen
+cj = cookielib.LWPCookieJar()
+Request = urllib2.Request
+USER_AGENT = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3'
+headers = {'User-Agent': USER_AGENT,
+           'Accept': '*/*',
+           'Connection': 'keep-alive'}
+openloadhdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
+       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+       'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+       'Accept-Encoding': 'none',
+       'Accept-Language': 'en-US,en;q=0.8',
+       'Connection': 'keep-alive'}
 
-addon_id = 'plugin.video.efilmes'
-selfAddon = xbmcaddon.Addon(id=addon_id)
-addonfolder = selfAddon.getAddonInfo('path')
-artfolder = '/resources/img/'
-
-
+#sources =
 ################################################## 
 
 # MENUS############################################
@@ -70,7 +96,7 @@ def listar_videos(url):
         abrir_url(url), re.DOTALL)
     for link, nomefilme, imgfilme in grupo:
         nomefilme = nomefilme.replace('Assistir', "").replace('Filme',"").replace('&#8211;',"")
-        addDirPlayer(nomefilme, link, 4, imgfilme, False)
+        addDirPlayer(nomefilme, link, 100, imgfilme, False)
     # Parte do codigo para o "link" da pagina seguinte
     # <a class='blog-pager-older-link' href='http://www.cinemaemcasa.pt/search/label/Anima%C3%A7%C3%A3o?updated-max=2015-03-21T13:00:00Z&amp;max-results=20&amp;start=15&amp;by-date=false' id='Blog1_blog-pager-older-link' title='Next Post'>Mais Filmes &#187;</a>
     page = re.compile('<a class="nextpostslink" rel="next" href="(.+?)">»</a>').findall(abrir_url(url))
@@ -94,151 +120,100 @@ def pesquisa():
 
 
 # Resolvers
+
+def obtem_OpenLoad(url):
+    link = client.request(url)
+    url = 'https://api.openload.io/1/file/dlticket?file=%s' % id
+
+    result = client.request(url)
+    result = json.loads(result)
+
+    cap = result['result']['captcha_url']
+
+    if  not cap == None : cap = captcha.keyboard(cap)
+
+    time.sleep(result['result']['wait_time'])
+
+    url = 'https://api.openload.io/1/file/dl?file=%s&ticket=%s' % (id, result['result']['ticket'])
+
+    if not cap == None : url += '&captcha_response=%s' % urllib.quote(cap)
+
+    result = client.request(url)
+    result = json.loads(result)
+
+    urlVideo = result['result']['url'] + '?mime=true'
+
+    return [urlVideo]
+
 def obtem_neodrive(url):
-	codigo_fonte = abrir_url(url)
-	
-	try:
-		url_video = re.findall(r'vurl.=."(.*?)";',codigo_fonte)[0]
-		return [url_video,"-"]
-	except:
-		return ["-","-"]
-		
-		
+    codigo_fonte = abrir_url(url)
+
+    try:
+        url_video = re.findall(r'vurl.=."(.*?)";',codigo_fonte)[0]
+        return [url_video,"-"]
+    except:
+        return ["-","-"]
+
+
 def obtem_neodrive2(url):
-	codigo_fonte = abrir_url(url)
-	
-	try:
-		url_video = re.findall(r'vurl.=."(.*?)";',codigo_fonte)[0]
-		return [url_video,"-"]
-	except:
-		return ["-","-"]		
-		
+    codigo_fonte = abrir_url(url)
+
+    try:
+        url_video = re.findall(r'vurl.=."(.*?)";',codigo_fonte)[0]
+        return [url_video,"-"]
+    except:
+        return ["-","-"]
+
 
 def obtem_videopw(url):
-	codigo_fonte = abrir_url(url)
-	
-	try:
-		url_video = re.findall(r'var vurl2 = "(.*?)";',codigo_fonte)[0]
-		return [url_video,"-"]
-	except:
-		return ["-","-"]
+    codigo_fonte = abrir_url(url)
+
+    try:
+        url_video = re.findall(r'var vurl2 = "(.*?)";',codigo_fonte)[0]
+        return [url_video,"-"]
+    except:
+        return ["-","-"]
 
 
 def obtem_videopw2(url):
-	codigo_fonte = abrir_url(url)
-	
-	try:
-		url_video = re.findall(r'var vurl2 = "(.*?)";',codigo_fonte)[0]
-		return [url_video,"-"]
-	except:
-		return ["-","-"]		
-
-
-def obtem_videomega(url):
     codigo_fonte = abrir_url(url)
-    code = re.compile('document.write\(unescape\("(.+?)"\)\)\;').findall(codigo_fonte)
-    texto = urllib.unquote(code[0])
+
     try:
-        url_video = re.compile('file: "(.+?)"').findall(texto)[0]
+        url_video = re.findall(r'var vurl2 = "(.*?)";',codigo_fonte)[0]
+        return [url_video,"-"]
     except:
-        url_video = '-'
-    try:
-        url_legendas = re.compile('http://videomega.tv/servesrt.php\?s=(.+?).srt').findall(texto)[0] + '.srt'
-    except:
-        url_legendas = '-'
-    return [url_video, url_legendas]
+        return ["-","-"]
 
-
-def videomega_resolver(referer):
-    html = abrir_url(referer)
-
-    ref_data = {'Host': 'videomega.tv',
-                'Connection': 'Keep-alive',
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-                'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36',
-                'Referer': referer}
-
-    if re.search('http://videomega.tv/iframe.js', html):
-        lines = html.splitlines()
-        aux = ''
-        for line in lines:
-            if re.search('http://videomega.tv/iframe.js', line):
-                aux = line
-                break;
-        ref = re.compile('ref="(.+?)"').findall(line)[0]
-    else:
-        try:
-            hash = re.compile('"http://videomega.tv/validatehash.php\?hashkey\=(.+?)"').findall(html)[0]
-            ref = re.compile('ref="(.+?)"').findall(
-                abrir_url_tommy("http://videomega.tv/validatehash.php?hashkey=" + hash, ref_data))[0]
-        except:
-            try:
-                hash = re.compile("'http://videomega.tv/validatehash.php\?hashkey\=(.+?)'").findall(html)[0]
-                ref = re.compile('ref="(.+?)"').findall(
-                    abrir_url_tommy("http://videomega.tv/validatehash.php?hashkey=" + hash, ref_data))[0]
-            except:
-                iframe = re.compile('"http://videomega.tv/iframe.php\?(.+?)"').findall(html)[0] + '&'
-                ref = re.compile('ref=(.+?)&').findall(iframe)[0]
-
-    url = 'http://videomega.tv/cdn.php?ref=' + ref + '&width=638&height=431&val=1'
-    iframe_html = abrir_url_tommy(url, ref_data)
-    code = re.compile('document.write\(unescape\("(.+?)"\)\)\;').findall(iframe_html)
-    id = re.compile('<div id="(.+?)" name="adblock"').findall(iframe_html)[0]
-    texto = ''
-    for c in code:
-        aux = urllib.unquote(c)
-        if re.search(id, aux):
-            texto = aux
-            break
-    if texto == '': return ['-', '-']
-    try:
-        url_video = re.compile('file:"(.+?)"').findall(texto)[0]
-    except:
-        try:
-            url_video = re.compile('file: "(.+?)"').findall(texto)[0]
-        except:
-            url_video = '-'
-    if not 'mp4' in url_video: return ['-', '-']
-    try:
-        url_legendas = re.compile('http://videomega.tv/servesrt.php\?s=(.+?).srt').findall(texto)[0] + '.srt'
-    except:
-        url_legendas = '-'
-    ref_data = {'Host': url_video.split('/')[2],
-                'Connection': 'Keep-alive',
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-                'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36',
-                'Referer': 'http://videomega.tv/player/jwplayer.flash.swf'}
-    return [url_video + headers_str(ref_data), url_legendas]
 
 
 def obtem_url_dropvideo(url):
-	codigo_fonte = abrir_url(url)
-	try:
-		soup = BeautifulSoup(codigo_fonte)
-		lista = soup.findAll('script')
-		js = str(lista[9]).replace('<script>',"").replace('</script>',"")
-		sUnpacked = jsunpack.unpack(js)
-		print sUnpacked
-		url_video = re.findall(r'var vurl2="(.*?)";', sUnpacked)
-		url_video = str(url_video).replace("['","").replace("']","")
-		return [url_video,"-"]
-	except:
-		pass
-		
-		
+    codigo_fonte = abrir_url(url)
+    try:
+        soup = BeautifulSoup(codigo_fonte)
+        lista = soup.findAll('script')
+        js = str(lista[9]).replace('<script>',"").replace('</script>',"")
+        sUnpacked = jsunpack.unpack(js)
+        print sUnpacked
+        url_video = re.findall(r'var vurl2="(.*?)";', sUnpacked)
+        url_video = str(url_video).replace("['","").replace("']","")
+        return [url_video,"-"]
+    except:
+        pass
+
+
 def obtem_url_dropvideo2(url):
-	codigo_fonte = abrir_url(url)
-	try:
-		soup = BeautifulSoup(codigo_fonte)
-		lista = soup.findAll('script')
-		js = str(lista[9]).replace('<script>',"").replace('</script>',"")
-		sUnpacked = jsunpack.unpack(js)
-		print sUnpacked
-		url_video = re.findall(r'var vurl2="(.*?)";', sUnpacked)
-		url_video = str(url_video).replace("['","").replace("']","")
-		return [url_video,"-"]
-	except:
-		pass		
+    codigo_fonte = abrir_url(url)
+    try:
+        soup = BeautifulSoup(codigo_fonte)
+        lista = soup.findAll('script')
+        js = str(lista[9]).replace('<script>',"").replace('</script>',"")
+        sUnpacked = jsunpack.unpack(js)
+        print sUnpacked
+        url_video = re.findall(r'var vurl2="(.*?)";', sUnpacked)
+        url_video = str(url_video).replace("['","").replace("']","")
+        return [url_video,"-"]
+    except:
+        pass
 
 ###################################################################################
 # FUNCOES JÁ FEITAS
@@ -251,7 +226,19 @@ def abrir_url(url):
     response.close()
     return link
 
-
+def getHtml(url, referer, hdr=None, NoCookie=None):
+    if not hdr:
+        req = Request(url, '', headers)
+    else:
+        req = Request(url, '', hdr)
+    if len(referer) > 1:
+        req.add_header('Referer', referer)
+    response = urlopen(req, timeout=60)
+    data = response.read()
+    if not NoCookie:
+        cj.save(cookiePath)
+    response.close()
+    return data
 #
 def addLink(name, url, iconimage):
     ok = True
@@ -278,19 +265,168 @@ def addDirPlayer(name, url, mode, iconimage, pasta=False):
     ok = xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]), url=u, listitem=liz, isFolder=pasta)
     return ok	
 	
+'''def PLAYVIDEO(url, name, download=None):
+    progress.create('Play video', 'Searching videofile.')
+    progress.update( 10, "", "Loading video page", "" )
+    videosource = getHtml(url, url)
+    playvideo(videosource, name, download, url)
 
-#
+def playvideo(videosource, name, download=None, url=None):
+    videosource = getHtml(url, url)
+    hosts = []
+    if re.search('videomega\.tv/', videosource, re.DOTALL | re.IGNORECASE):
+        hosts.append('VideoMega')
+    if re.search('openload\.', videosource, re.DOTALL | re.IGNORECASE):
+        hosts.append('OpenLoad')
+    if re.search('streamin.to', videosource, re.DOTALL | re.IGNORECASE):
+        hosts.append('Streamin')
+    if re.search('www.flashx.tv', videosource, re.DOTALL | re.IGNORECASE):
+        hosts.append('FlashX')
+    if len(hosts) == 0:
+        progress.close()
+        dialog.ok('Oh oh','Couldn\'t find any video')
+        return
+    elif len(hosts) > 1:
+        if addon.getSetting("dontask") == "true":
+            vidhost = hosts[0]
+        else:
+            vh = dialog.select('Videohost:', hosts)
+            vidhost = hosts[vh]
+    else:
+        vidhost = hosts[0]
+
+    if vidhost == 'VideoMega':
+        progress.update( 40, "", "Loading videomegatv", "" )
+        if re.search("videomega.tv/iframe.js", videosource, re.DOTALL | re.IGNORECASE):
+            hashref = re.compile("""javascript["']>ref=['"]([^'"]+)""", re.DOTALL | re.IGNORECASE).findall(videosource)
+        elif re.search("videomega.tv/iframe.php", videosource, re.DOTALL | re.IGNORECASE):
+            hashref = re.compile(r"iframe\.php\?ref=([^&]+)&", re.DOTALL | re.IGNORECASE).findall(videosource)
+        elif re.search("videomega.tv/view.php", videosource, re.DOTALL | re.IGNORECASE):
+            hashref = re.compile(r'view\.php\?ref=([^"]+)', re.DOTALL | re.IGNORECASE).findall(videosource)
+        elif re.search("videomega.tv/cdn.php", videosource, re.DOTALL | re.IGNORECASE):
+            hashref = re.compile(r'cdn\.php\?ref=([^"]+)', re.DOTALL | re.IGNORECASE).findall(videosource)
+        elif re.search("videomega.tv/\?ref=", videosource, re.DOTALL | re.IGNORECASE):
+            hashref = re.compile(r'videomega.tv/\?ref=([^"]+)', re.DOTALL | re.IGNORECASE).findall(videosource)
+        else:
+            hashkey = re.compile("""hashkey=([^"']+)""", re.DOTALL | re.IGNORECASE).findall(videosource)
+            if not hashkey:
+                dialog.ok('Oh oh','Couldn\'t find playable videomega link')
+                return
+            if len(hashkey) > 1:
+                i = 1
+                hashlist = []
+                for x in hashkey:
+                    hashlist.append('Video ' + str(i))
+                    i += 1
+                vmvideo = dialog.select('Multiple videos found', hashlist)
+                hashkey = hashkey[vmvideo]
+            else: hashkey = hashkey[0]
+            hashpage = getHtml('http://videomega.tv/validatehash.php?hashkey='+hashkey, url)
+            hashref = re.compile('ref="([^"]+)', re.DOTALL | re.IGNORECASE).findall(hashpage)
+        progress.update( 80, "", "Getting video file from Videomega", "" )
+        videopage = getHtml('http://videomega.tv/view.php?ref='+hashref[0], url)
+        videourl = re.compile('<source src="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(videopage)
+        videourl = videourl[0]
+    elif vidhost == 'OpenLoad':
+        progress.update( 40, "", "Loading Openload", "" )
+        openloadurl = re.compile(r"//(?:www\.)?openload\.(?:co|io)?/(?:embed|f)/([0-9a-zA-Z-_]+)", re.DOTALL | re.IGNORECASE).findall(videosource)
+        openloadlist = list(set(openloadurl))
+        if len(openloadlist) > 1:
+            i = 1
+            hashlist = []
+            for x in openloadlist:
+                hashlist.append('Video ' + str(i))
+                i += 1
+            olvideo = dialog.select('Multiple videos found', hashlist)
+            openloadurl = openloadlist[olvideo]
+        else: openloadurl = openloadurl[0]
+
+        openloadurl1 = 'http://openload.co/embed/%s/' % openloadurl
+
+        try:
+            openloadsrc = getHtml(openloadurl1, '', openloadhdr)
+            progress.update( 80, "", "Getting video file from OpenLoad", "")
+            videourl = decodeOpenLoad(openloadsrc)
+        except:
+            dialog.ok('Oh oh','Couldn\'t find playable OpenLoad link')
+    elif vidhost == 'Streamin':
+        progress.update( 40, "", "Loading Streamin", "" )
+        streaminurl = re.compile('<iframe.*?src="(http://streamin\.to[^"]+)"', re.DOTALL | re.IGNORECASE).findall(videosource)
+        streaminsrc = getHtml2(streaminurl[0])
+        videohash = re.compile('h=([^"]+)', re.DOTALL | re.IGNORECASE).findall(streaminsrc)
+        videourl = re.compile('image: "(http://[^/]+/)', re.DOTALL | re.IGNORECASE).findall(streaminsrc)
+        progress.update( 80, "", "Getting video file from Streamin", "" )
+        videourl = videourl[0] + videohash[0] + "/v.mp4"
+    elif vidhost == 'FlashX':
+        progress.update( 40, "", "Loading FlashX", "" )
+        flashxurl = re.compile(r"//(?:www\.)?flashx\.tv/(?:embed-)?([0-9a-zA-Z]+)", re.DOTALL | re.IGNORECASE).findall(videosource)
+        flashxurl = 'http://flashx.tv/embed-%s-670x400.html' % flashxurl[0]
+        flashxsrc = getHtml2(flashxurl)
+        progress.update( 60, "", "Grabbing video file", "" )
+        flashxurl2 = re.compile('<a href="([^"]+)"', re.DOTALL | re.IGNORECASE).findall(flashxsrc)
+        flashxsrc2 = getHtml2(flashxurl2[0])
+        progress.update( 70, "", "Grabbing video file", "" )
+        flashxjs = re.compile("<script type='text/javascript'>([^<]+)</sc", re.DOTALL | re.IGNORECASE).findall(flashxsrc2)
+        progress.update( 80, "", "Getting video file from FlashX", "" )
+        flashxujs = beautify(flashxjs[0])
+        videourl = re.compile(r'\[{\s+file: "([^"]+)",', re.DOTALL | re.IGNORECASE).findall(flashxujs)
+        videourl = videourl[0]
+    progress.close()
+    playvid(videourl, name, download)'''
+
 def player(name, url, iconimage):
+    try:
+        import urlresolver
+    except:
+        addon.log_error("Failed to import script.module.urlresolver")
+        xbmcgui.Dialog().ok("Import Failure", "Failed to import URLResolver", "A component needed by this addon is missing on your system", "Please visit www.xbmc.org for support")
+
+        sources = []
+        html = GET_HTML(url)
+
+    if 'DROPVIDEO' in hoster:
+        html = GET_HTML(hoster)
+        r = re.compile('src=".*?drop.*?id=(.*?)"').findall(str(html))
+        for id in r:
+            hosted_media = urlresolver.HostedMediaFile(url='http://www.dropvideo.com/embed/'+ id, title='Dropvideo')
+            sources.append(hosted_media)
+
+    if 'VIDEOTT' in hoster:
+        html = GET_HTML(hoster)
+        r = re.compile('src=".*?drop.*?id=(.*?)"').findall(str(html))
+        for id in r:
+            hosted_media = urlresolver.HostedMediaFile(url='http://video.tt/e/'+ id, title='Videott')
+            sources.append(hosted_media)
+
+    if 'OPENLOAD' in hoster:
+        html = GET_HTML(hoster)
+        r = re.compile('src=".*?video.*?/e/(.*?)"').findall(str(html))
+        for id in r:
+            hosted_media = urlresolver.HostedMediaFile(url='https://openload.co/embed/'+ id, title='Openload')
+            sources.append(hosted_media)
+
+        source = urlresolver.choose_source(sources)
+try:
+    if source: stream_url = source.resolve()
+    else: stream_url = ''
+    liz=xbmcgui.ListItem(linkback, iconImage='',thumbnailImage=img)
+    liz.setInfo('Video', {'Title': linkback} )
+    liz.setProperty("IsPlayable","true")
+    xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=stream_url,isFolder=False,listitem=liz)#; Addon.resolve_url(stream_url)
+    xbmc.Player().play(stream_url,liz)
+
+
+'''def player(name, url, iconimage):
+    try:
+        import urlresolver
+    except:
+        addon.log_error("Failed to import script.module.urlresolver")
+        xbmcgui.Dialog().ok("Import Failure", "Failed to import URLResolver", "A component needed by this addon is missing on your system", "Please visit www.xbmc.org for support")
+
+    videott = r'src=".*?video.*?/e/(.*?)"'
+    openload = r'data-src=".*?openload.*?/embed/(.*?)"'
     dropmega = r'src=".*?drop.*?id=(.*?)"'
-    dropmega2 = r'src=".*?drop.*?/embed/(.*?)"'	
     videopw = r'src=".*?videopw.*?/e/(.*?)"'
-    videopw2 = r'src=".*?videopw.*?id=(.*?)"'	
-    neomega = r'src=".*?neodrive.*?id=(.*?)"'
-    neomega2 = r'src=".*?neodrive.*?id=(.*?)"'	
-    flashx = r'src=".*?flashx.*?id=(.*?)"'
-    videomega = r'src=".*?videomega.*?ref=(.*?)"'
-    nowvideo = r'src=".*?nowvideo.*?id=(.*?)"'
-    okru = r'src=".*?okru.*?id=(.*?)"'
     mensagemprogresso = xbmcgui.DialogProgress()
     mensagemprogresso.create('eFilmesnaRede', 'A resolver link', 'Por favor aguarde...')
     mensagemprogresso.update(33)
@@ -317,6 +453,11 @@ def player(name, url, iconimage):
     except:
         pass
     try:
+        links.append('https://openload.co/embed/%s' % re.findall(openload, codigo_fonte)[0])
+        hosts.append('Openload')
+    except:
+        pass
+    try:
         links.append(re.findall(vidig, codigo_fonte)[0])
         hosts.append('Vidig')
     except:
@@ -334,6 +475,11 @@ def player(name, url, iconimage):
     try:
         links.append('http://neodrive.co/embed/'+re.findall(neomega, codigo_fonte)[0])
         hosts.append('Neodrive')
+    except:
+        pass
+    try:
+        links.append('http://video.tt/e/%s'+re.findall(videott, codigo_fonte)[0])
+        hosts.append('Videott')
     except:
         pass
     try:
@@ -372,11 +518,6 @@ def player(name, url, iconimage):
     except:
         pass
     try:
-        links.append(re.findall(videott, codigo_fonte)[0])
-        hosts.append('Video.TT')
-    except:
-        pass
-    try:
         links.append(re.findall(picasa, codigo_fonte)[0])
         hosts.append('Picasa')
     except:
@@ -384,16 +525,6 @@ def player(name, url, iconimage):
     try:
         links.append(re.findall(google, codigo_fonte)[0])
         hosts.append('Gdrive')
-    except:
-        pass
-    try:
-        links.append(re.findall(vk, codigo_fonte)[0])
-        hosts.append('Vk')
-    except:
-        pass
-    try:
-        links.append(re.findall(nvideo, codigo_fonte)[0])
-        hosts.append('Nowvideo - Sem suporte')
     except:
         pass
     try:
@@ -421,16 +552,7 @@ def player(name, url, iconimage):
         hosts.append('CloudZilla(Legendado)')
     except:
         pass
-    try:
-        links.append(re.findall(vodlocker, codigo_fonte)[0])
-        hosts.append('Vodlocker')
-    except:
-        pass
-    try:
-        links.append('http://www.firedrive.com/embed/' + re.findall(firedrive2, codigo_fonte)[0])
-        hosts.append('Firedrive')
-    except:
-        pass
+
     if not hosts:
         mensagemprogresso.update(100)
         mensagemprogresso.close()
@@ -452,6 +574,14 @@ def player(name, url, iconimage):
         matriz = obtem_url_dropvideo2(url_video)   # esta linha está a mais		
     elif 'filmesonlinebr.info/player' in url_video:
         matriz = obtem_url_picasa(url_video)
+    elif 'videott' in url_video:
+        if source:
+            stream_url = source.resolve()
+            addon.resolve_url(stream_url)
+        else:
+            addon.resolve_url(False)
+    elif 'openload' in url_video:
+        matriz = obtem_OpenLoad(url_video)
     elif 'vk.com/video_ext' in url_video:
         matriz = obtem_url_vk(url_video)
     elif 'neodrive' in url_video:
@@ -466,8 +596,6 @@ def player(name, url, iconimage):
         matriz = obtem_url_firedrive(url_video)
     elif 'cloudzilla' in url_video:
         matriz = obtem_cloudzilla(url_video)
-    elif 'http://video.tt' in url_video:
-        matriz = obtem_videott(url_video)
     elif 'videobis.net' in url_video:
         matriz = obtem_videobis(url_video)  # video.pw
     elif 'videopw' in url_video:
@@ -500,7 +628,7 @@ def player(name, url, iconimage):
     # try:
     xbmcPlayer = xbmc.Player(xbmc.PLAYER_CORE_AUTO)
     xbmcPlayer.play(url)
-    return
+    return'''
         
 ############################################################################################################
 #                                               GET PARAMS                                                 #
@@ -572,9 +700,12 @@ elif mode == 3:
     print ""
     pesquisa()
 
+elif mode == 100:
+    PLAYVIDEO(url, name)
+
 elif mode == 4:
     print ""
-    player(name, url, iconimage)
+    player(name, url)
 	
 
 xbmcplugin.endOfDirectory(int(sys.argv[1]))
