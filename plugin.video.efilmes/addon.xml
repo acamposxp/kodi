@@ -1,4 +1,4 @@
-<addon id="plugin.video.efilmes" name="[COLOR blue]e[/COLOR][B][COLOR blue]F[/COLOR][/B][COLOR blue]ilmes[/COLOR][COLOR green]na[/COLOR][B][COLOR green]R[/COLOR][/B][COLOR green]ede[/COLOR][COLOR yellow].com[/COLOR]" provider-name="[B]acamposxp[/B] | [B]Cleiton Leonel Creton[/B]" version="0.0.1">   
+<addon id="plugin.video.efilmes" name="[COLOR blue]e[/COLOR][B][COLOR blue]F[/COLOR][/B][COLOR blue]ilmes[/COLOR][COLOR green]na[/COLOR][B][COLOR green]R[/COLOR][/B][COLOR green]ede[/COLOR][COLOR yellow].com[/COLOR]" provider-name="[B]acamposxp[/B] | [B]Cleiton Leonel Creton[/B]" version="0.0.2">   
 	<requires>
     <import addon="xbmc.python" version="2.1.0"/>
 	<import addon="script.module.urlresolver" version="1.0.0"/>
